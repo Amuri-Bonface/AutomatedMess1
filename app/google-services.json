@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "778771699559",
+    "firebase_url": "https://automated-mess-service.firebaseio.com",
+    "project_id": "automated-mess-service",
+    "storage_bucket": "automated-mess-service.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778771699559:android:995242913a9c5058",
+        "android_client_info": {
+          "package_name": "com.project.ams.automatedmess"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "778771699559-jidt3g06tv13hdoe1kipuhii7ggmgvvj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSE8I1qK81NmuEnOlCOcd7uM-aFtcyQn4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

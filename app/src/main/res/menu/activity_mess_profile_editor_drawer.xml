@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_edit_profile"
+            android:icon="@drawable/ic_menu_edit_profile"
+            android:title="Edit Profile" />
+        <item
+            android:id="@+id/nav_edit_menu"
+            android:icon="@drawable/menu_edit_menu"
+            android:title="Add Menu" />
+        <item
+            android:id="@+id/nav_customers_orders"
+            android:icon="@drawable/ic_menu_customer_orders"
+            android:title="Customer's Order" />
+        <item
+            android:id="@+id/nav_order_history"
+            android:icon="@drawable/ic_menu_order_history"
+            android:title="Order History" />
+        <item
+            android:id="@+id/nav_user_reviews"
+            android:icon="@drawable/ic_menu_user_reviews"
+            android:title="Review's" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_settings"
+            android:title="Settings" />
+        <item
+            android:id="@+id/nav_sign_out"
+            android:icon="@drawable/ic_sign_out"
+            android:title="Sign Out" />
+    </group>
+
+</menu>

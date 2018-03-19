@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:contentDescription="Panchshil Mess"
+        android:background="#FF9933"
+        android:text="Panchshil Mess"
+        android:textColor="#FFFFFF"
+        android:textSize="50dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        tools:text="Panchashil Mess" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="9876543210"
+        android:textSize="25dp" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="380dp"
+        android:layout_height="86dp"
+        android:text="Panchshil Mess"
+        android:textSize="25dp" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="81dp"
+        android:text="Menu" />
+
+
+</LinearLayout>
