@@ -5,15 +5,15 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,11 +22,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,8 +36,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 public class MessProfileEditor extends AppCompatActivity
         implements
@@ -80,8 +79,7 @@ public class MessProfileEditor extends AppCompatActivity
      * {@link #onRequestPermissionsResult(int, String[], int[])}.
      */
     private boolean mPermissionDenied = false;
-
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,6 +148,28 @@ public class MessProfileEditor extends AppCompatActivity
 
                     editProfileMobileNo.setText(messMobileNo);
                     editProfileTelephoneNo.setText(messTelephoneNo);
+
+                    //display my location
+                    LatLng latLng = new LatLng(messLatitude, messLongitude);
+                    //   mMap.clear();
+                    CameraPosition position = CameraPosition.builder()
+                            .target(latLng)
+                            .zoom(17)
+                            .bearing(0)
+                            .tilt(0)
+                            .build();
+                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    mMap.setTrafficEnabled(true);
+                    mMap.setBuildingsEnabled(true);
+                    mMap.getUiSettings().setZoomControlsEnabled(true);
+                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(position));
+
+                    mMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)).position(latLng).title("Tittle"));
+
+
+
+
                 }
             }
 
@@ -158,8 +178,6 @@ public class MessProfileEditor extends AppCompatActivity
 
             }
         });
-
-
 
         // TODO: Check whether this works on a real phone
 //        gpsBtn.setOnClickListener(new View.OnClickListener() {
@@ -221,6 +239,9 @@ public class MessProfileEditor extends AppCompatActivity
                 currentDBRef.child("mProviderLocation").child("mProviderLongitude").setValue(messLongitude);
                 currentDBRef.child("mProviderMobileNo").setValue(messMobileNo);
                 currentDBRef.child("mProviderTelephoneNo").setValue(messTelephoneNo);
+
+                // Store longitude and latitude values  in the database in a separate Node
+                postCordinates(messName,messMobileNo);
 
                 Toast.makeText(MessProfileEditor.this, "Values saved in the database", Toast.LENGTH_LONG).show();
             }
@@ -385,4 +406,13 @@ public class MessProfileEditor extends AppCompatActivity
         return messLongitude;
     }
 
+
+
+    public void postCordinates(String messName, String messMobileNo)
+    {
+        DatabaseReference currentDBcordinates = FirebaseDatabase.getInstance().getReference().child("Users").child("MessProviders").child("locations").child(userID);
+        currentDBcordinates.child("mProviderLatitude").setValue(messLatitude);
+        currentDBcordinates.child("mProviderLongitude").setValue(messLongitude);
+        currentDBcordinates.child("mProviderBrandName").setValue(messName);
+    }
 }
