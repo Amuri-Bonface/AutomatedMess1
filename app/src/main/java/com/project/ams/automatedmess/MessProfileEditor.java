@@ -2,6 +2,8 @@ package com.project.ams.automatedmess;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,6 +38,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MessProfileEditor extends AppCompatActivity
         implements
@@ -79,12 +85,17 @@ public class MessProfileEditor extends AppCompatActivity
      * {@link #onRequestPermissionsResult(int, String[], int[])}.
      */
     private boolean mPermissionDenied = false;
-    
+
+    //introduce an array of markers
+    private ArrayList<LatLng> MarkerPoints;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mess_profile_editor);
 
+        // Initializing array of markers
+        MarkerPoints = new ArrayList<>();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -148,28 +159,6 @@ public class MessProfileEditor extends AppCompatActivity
 
                     editProfileMobileNo.setText(messMobileNo);
                     editProfileTelephoneNo.setText(messTelephoneNo);
-
-                    //display my location
-                    LatLng latLng = new LatLng(messLatitude, messLongitude);
-                    //   mMap.clear();
-                    CameraPosition position = CameraPosition.builder()
-                            .target(latLng)
-                            .zoom(17)
-                            .bearing(0)
-                            .tilt(0)
-                            .build();
-                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                    mMap.setTrafficEnabled(true);
-                    mMap.setBuildingsEnabled(true);
-                    mMap.getUiSettings().setZoomControlsEnabled(true);
-                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(position));
-
-                    mMap.addMarker(new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)).position(latLng).title("Tittle"));
-
-
-
-
                 }
             }
 
@@ -178,6 +167,8 @@ public class MessProfileEditor extends AppCompatActivity
 
             }
         });
+
+
 
         // TODO: Check whether this works on a real phone
 //        gpsBtn.setOnClickListener(new View.OnClickListener() {
@@ -240,9 +231,8 @@ public class MessProfileEditor extends AppCompatActivity
                 currentDBRef.child("mProviderMobileNo").setValue(messMobileNo);
                 currentDBRef.child("mProviderTelephoneNo").setValue(messTelephoneNo);
 
-                // Store longitude and latitude values  in the database in a separate Node
+               //Store longitude and latitude values  in the database in a separate Node
                 postCordinates(messName,messMobileNo);
-
                 Toast.makeText(MessProfileEditor.this, "Values saved in the database", Toast.LENGTH_LONG).show();
             }
         });
@@ -328,7 +318,20 @@ public class MessProfileEditor extends AppCompatActivity
         mMap = googleMap;
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
+
+
         enableMyLocation();
+
+        // Setting onclick event listener for the map
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                markers(point);
+            }
+        });
+
+
+
     }
 
     private void enableMyLocation() {
@@ -354,9 +357,9 @@ public class MessProfileEditor extends AppCompatActivity
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        messLatitude = location.getLatitude();
-        messLongitude = location.getLongitude();
-        Toast.makeText(this, "Latitude (" + messLatitude + ") & Longitude (" + messLongitude + ") Values copied", Toast.LENGTH_LONG).show();
+        //messLatitude = location.getLatitude();
+        //messLongitude = location.getLongitude();
+     //   Toast.makeText(this, "Latitude (" + messLatitude + ") & Longitude (" + messLongitude + ") Values copied", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -386,6 +389,52 @@ public class MessProfileEditor extends AppCompatActivity
         }
     }
 
+    public void markers(LatLng point)
+    {
+        // clearing map and generating new marker points
+        mMap.clear();
+        MarkerPoints.clear();
+       // Adding new item to the ArrayList
+        MarkerPoints.add(point);
+        // Creating MarkerOptions
+        MarkerOptions options = new MarkerOptions();
+        // Setting the position of the marker
+        options.position(point);
+
+        /**
+         * For the start location, the color of marker is Red
+
+         */
+       if (MarkerPoints.size() == 1) {
+            messLongitude= point.longitude;
+            messLatitude=point.latitude;
+            Geocoder geocoder = new Geocoder(MessProfileEditor.this);
+          try {
+                List<Address> addresses = geocoder.getFromLocation(messLatitude, messLongitude, 1);
+                if (addresses != null && addresses.size() > 0) {
+                    String address=addresses.get(0).getAddressLine(0);
+
+                    Toast.makeText(getApplicationContext(), addresses.get(0).getAddressLine(0), Toast.LENGTH_LONG).show();
+                }
+           } catch (IOException e) {
+               e.printStackTrace();
+            }
+            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+
+      }
+        // Add new marker to the Google Map Android API V2
+        mMap.addMarker(options);
+        CameraPosition position = CameraPosition.builder()
+                .target(point)
+                .zoom(16)
+                .bearing(0)
+                .tilt(0)
+                .build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(position));
+
+            }
+
+
     /**
      * Displays a dialog with error message explaining that the location permission is missing.
      */
@@ -405,8 +454,6 @@ public class MessProfileEditor extends AppCompatActivity
     public double getMproviderLongitude(){
         return messLongitude;
     }
-
-
 
     public void postCordinates(String messName, String messMobileNo)
     {
